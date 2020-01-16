@@ -1,6 +1,6 @@
 from setuptools import setup
 setup(name='iisysgen',
-      version='0.1',
+      version='0.2',
       description="Tools for generating GNU/Linux system images",
       author="Colin Hogben",
       author_email="colin@infinnovation.co.uk",
@@ -16,10 +16,10 @@ setup(name='iisysgen',
           'Programming Language :: Python :: 2.7',
           'Programming Language :: Python :: 3',
       ],
-      py_modules=['iisysgen'],
+      packages=['iisysgen'],
       entry_points={
           'console_scripts': [
-              'iisysgen = iisysgen:main',
+              'iisysgen = iisysgen.cmd:main',
           ],
       },
 )
