@@ -3,3 +3,6 @@ __pycache__
 *.built
 */Dockerfile
 */helpers
+build/
+dist/
+*.egg-info/
