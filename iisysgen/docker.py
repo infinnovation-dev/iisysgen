@@ -22,7 +22,12 @@ class DockerGen(object):
     def from_tarball(self, tarball, dest='/'):
         """Start from a previously built tarball"""
         self.put('FROM scratch')
-        self.put('ADD %s %s' % (tarball, dest))
+        self.add_tarball(tarball, dest)
+
+    def add_tarball(self, tarball, dest='/'):
+        """Populate with a previously built tarball"""
+        helper = self.copy_as_helper(tarball, name=os.path.basename(tarball))
+        self.put('ADD %s %s' % (helper, dest))
 
     def env(self, var, value):
         self.put('ENV %s %s' % (var, value))
