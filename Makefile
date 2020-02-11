@@ -1,4 +1,4 @@
-TARGETPY = $(filter-out iisysgen.py, $(wildcard *.py))
+TARGETPY = $(filter-out setup.py,$(wildcard *.py))
 TARGETS = $(TARGETPY:.py=)
 
 all:	$(TARGETS:=.built)
@@ -7,10 +7,17 @@ all:	$(TARGETS:=.built)
 	docker build -t $* $*
 
 %/Dockerfile:	%.py
-	python3 -m iisysgen build -c $*.yaml $*
+	python3 -m iisysgen.cmd generate \
+	    $(addprefix -c ,$(wildcard $*.yaml) $(wildcard $*.json)) \
+	    $*
 
-$(addsuffix /Dockerfile,$(TARGETS)):	%/Dockerfile:	%.yaml
+# Depend on any configuration files
+define cfg_template =
+$(1)/Dockerfile:	$(wildcard $(1).yaml) $(wildcard $(1).json)
+endef
 
-$(addsuffix /Dockerfile,$(TARGETS)):	iisysgen.py
+$(foreach t,$(TARGETS),$(eval $(call cfg_template,$(t))))
+
+$(addsuffix /Dockerfile,$(TARGETS)):	iisysgen/docker.py
 
 .PRECIOUS:	%/Dockerfile
