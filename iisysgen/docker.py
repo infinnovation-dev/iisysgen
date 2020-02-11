@@ -46,6 +46,12 @@ class DockerGen(object):
             cmd += ' < ' + quote(stdin)
         self.put('RUN %s' % cmd)
 
+    def run_multi(self, *cmds):
+        """Run several commands"""
+        qcmds = [self.quote_args(cmd) if isinstance(cmd, (tuple,list)) else cmd
+                 for cmd in cmds]
+        self.put('RUN %s' % (' \\\n && '.join(qcmds)))
+
     def mkdir(self, path, mode=None):
         if mode is not None:
             self.run(['mkdir','-p','-m',mode,path])
