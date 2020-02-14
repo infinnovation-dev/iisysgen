@@ -20,7 +20,8 @@ class DockerGen(object):
         if rebase:
             # Use multi-stage build to reset layer count
             self.put('FROM %s as prior' % image)
-            self.run('find / -xdev \( -uid 0 -a -gid 0 \) -o -print0 | cpio --create -0 --quiet > /nonroot.cpio')
+            # docker COPY loses ownership and setuid bit, so save those
+            self.run('find / -xdev \( -uid 0 -a -gid 0 -a \! -perm -u+s \) -o -print0 | cpio --create -0 --quiet > /nonroot.cpio')
             self.nl()
             self.put('# Second stage')
             self.put('FROM scratch')
